@@ -21,7 +21,7 @@ $beianNumber = trim((string) mgblog_option($this->options, 'beianNumber', ''));
     <?php echo mgblog_icon('chevron-up'); ?>
 </button>
 
-<script src="<?php $this->options->themeUrl('assets/js/theme.js?v=1.0.0'); ?>" defer></script>
+<script src="<?php $this->options->themeUrl('assets/js/theme.js?v=1.0.2'); ?>" defer></script>
 <?php $this->footer(); ?>
 </body>
 </html>

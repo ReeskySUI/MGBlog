@@ -78,7 +78,7 @@ $googleSiteVerification = trim((string) mgblog_option($this->options, 'googleSit
             }
         }());
     </script>
-    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.css?v=1.0.0'); ?>">
+    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.css?v=1.0.2'); ?>">
     <?php $this->header(http_build_query(array('social' => 0, 'description' => mgblog_h($seo['description'])), '', '&')); ?>
 </head>
 <body class="<?php echo mgblog_h(mgblog_body_class($this)); ?>" style="--accent: <?php echo mgblog_h($accentColor); ?>" data-mermaid-src="<?php $this->options->themeUrl('assets/vendor/mermaid/mermaid.min.js?v=11.17.2'); ?>">

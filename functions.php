@@ -290,7 +290,7 @@ function mgblog_normalize_link($url)
 function mgblog_members($options)
 {
     $members = array();
-    $defaultAvatar = rtrim((string) $options->themeUrl, '/') . '/assets/img/default-avatar.png?v=1.0.0';
+    $defaultAvatar = rtrim((string) $options->themeUrl, '/') . '/assets/img/default-avatar.png?v=1.0.2';
 
     $pages = \Widget\Contents\Page\Rows::alloc();
     while ($pages->next()) {

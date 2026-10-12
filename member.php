@@ -19,7 +19,7 @@ $avatar = mgblog_absolute_http_url(
     $this->options->siteUrl
 );
 if ($avatar === '') {
-    $avatar = rtrim((string) $this->options->themeUrl, '/') . '/assets/img/default-avatar.png?v=1.0.0';
+    $avatar = rtrim((string) $this->options->themeUrl, '/') . '/assets/img/default-avatar.png?v=1.0.2';
 }
 $memberRole = trim((string) ($this->fields->role ?? ''));
 $memberLinks = mgblog_member_links($this);
