@@ -40,8 +40,8 @@ function themeConfig($form)
         'profileName',
         null,
         'MGHUB',
-        _t('默认作者名称'),
-        _t('用于文章页元信息与 SEO 结构化数据；成员主页的作者信息由成员在自己的页面中维护。')
+        _t('站点默认作者名称'),
+        _t('仅用于首页与归档页的站点级 SEO 信息；文章页会自动显示该文的真实作者，无需在此统一设置。')
     );
     $form->addInput($profileName);
 
@@ -169,7 +169,8 @@ function themePageFields($layout)
         array('github', 'text', 'GitHub 地址', 'GitHub 主页地址，例如 https://github.com/name （可省略 https://）；留空不显示。'),
         array('email', 'text', '联系邮箱', '例如 name@example.com，显示为邮件按钮；留空不显示。'),
         array('website', 'text', '个人网站', '个人主页的 URL 地址；留空不显示。'),
-        array('links', 'textarea', '其他链接', '每行一条，格式“名称|URL”，例如：知乎|https://zhihu.com/people/name；自动识别 GitHub / X / 微博 / 知乎 / B站 / 邮箱 / RSS 图标，无法识别时显示通用图标。')
+        array('links', 'textarea', '其他链接', '每行一条，格式“名称|URL”，例如：知乎|https://zhihu.com/people/name；自动识别 GitHub / X / 微博 / 知乎 / B站 / 邮箱 / RSS 图标，无法识别时显示通用图标。'),
+        array('user', 'text', '关联后台用户名', '填写该成员在 Typecho 后台的登录用户名或昵称；该成员发布的文章，点击作者名将直接跳到本成员主页。留空时按“页面标题 = 作者昵称”自动匹配，仍匹配不到则链接到该作者的文章归档页。')
     );
 
     foreach ($fieldDefs as $fieldDef) {
@@ -310,6 +311,37 @@ function mgblog_members($options)
     }
 
     return $members;
+}
+
+/**
+ * 获取文章真实作者的展示名称与链接。
+ * 优先链接到该作者的成员主页（按 user 字段或页面标题匹配），否则链接到作者的文章归档页。
+ */
+function mgblog_author_context($archive, $options)
+{
+    $name = isset($archive->author) ? (string) $archive->author->screenName : '';
+    $loginName = isset($archive->author) ? (string) ($archive->author->name ?? '') : '';
+    $fallbackUrl = isset($archive->author) ? (string) $archive->author->permalink : '';
+
+    if ($name !== '' && class_exists('\Widget\Contents\Page\Rows')) {
+        // 独立别名，避免与侧栏 mgblog_members 的页面查询实例冲突。
+        $pages = \Widget\Contents\Page\Rows::alloc('context=author');
+        while ($pages->next()) {
+            if ((string) $pages->template !== 'member.php') {
+                continue;
+            }
+
+            $linkedUser = trim((string) ($pages->fields->user ?? ''));
+            $matched = ($linkedUser !== '' && ($linkedUser === $name || $linkedUser === $loginName))
+                || ((string) $pages->title === $name);
+
+            if ($matched) {
+                return array('name' => $name, 'url' => (string) $pages->permalink);
+            }
+        }
+    }
+
+    return array('name' => $name, 'url' => $fallbackUrl);
 }
 
 /**
@@ -528,8 +560,16 @@ function mgblog_seo_context($archive, $options)
         ? mgblog_content_image($archive, $siteUrl)
         : mgblog_absolute_http_url(mgblog_option($options, 'seoShareImage', ''), $siteUrl);
 
-    $authorName = mgblog_option($options, 'profileName', $siteTitle);
-    $authorUrl = mgblog_absolute_http_url(mgblog_option($options, 'seoAuthorUrl', $siteUrl), $siteUrl);
+    if ($isArticle) {
+        // 文章/页面使用真实作者，链接到其成员主页或文章归档页。
+        $articleAuthor = mgblog_author_context($archive, $options);
+        $authorName = $articleAuthor['name'];
+        $authorUrl = $articleAuthor['url'];
+    } else {
+        // 首页与归档页使用站点级默认作者信息。
+        $authorName = mgblog_option($options, 'profileName', $siteTitle);
+        $authorUrl = mgblog_absolute_http_url(mgblog_option($options, 'seoAuthorUrl', $siteUrl), $siteUrl);
+    }
     $keywords = method_exists($archive, 'getArchiveKeywords') ? (string) $archive->getArchiveKeywords() : '';
     $section = '';
     if ($archive->is('post') && isset($archive->categories) && is_array($archive->categories) && !empty($archive->categories[0]['name'])) {
@@ -708,7 +748,8 @@ function mgblog_icon($name, $class = '')
         'twitter' => '<path d="M4 4l6.3 8.3L4.4 20h2.3l4.8-5.9L15.6 20H20l-6.6-8.7L19.3 4h-2.3l-4.3 5.3L8.4 4Z"/>',
         'weibo' => '<path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3.2"/>',
         'bilibili' => '<path d="m7.5 3 3.2 4"/><path d="m16.5 3-3.2 4"/><rect x="3" y="7" width="18" height="13" rx="3.5"/><path d="M8.5 12.5v2M15.5 12.5v2"/>',
-        'zhihu' => '<path d="M7 7.5h10M7.5 7.5l9 9M17 16.5H7"/>'
+        'zhihu' => '<path d="M7 7.5h10M7.5 7.5l9 9M17 16.5H7"/>',
+        'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.6 3.6-6 8-6s8 2.4 8 6"/>'
     );
 
     if (!isset($paths[$name])) {
@@ -729,7 +770,7 @@ if (defined('__TYPECHO_ADMIN__')) {
 
     // 页面底部注入样式与显隐逻辑。
     \Typecho\Plugin::factory('admin/write-page.php')->bottom = function ($page) {
-        $memberFields = array('avatar', 'role', 'github', 'email', 'website', 'links');
+        $memberFields = array('avatar', 'role', 'github', 'email', 'website', 'links', 'user');
         $selectors = array();
         foreach ($memberFields as $memberField) {
             $selectors[] = 'body:not(.mg-member-mode) #custom-field .fields li.field:has([name="fields[' . $memberField . ']"])';

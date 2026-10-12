@@ -5,11 +5,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 
 $this->need('header.php');
 $enableToc = mgblog_option($this->options, 'enableToc', '1') === '1';
-$pageAuthorName = mgblog_option($this->options, 'profileName', $this->options->title);
-$pageAuthorUrl = mgblog_absolute_http_url(
-    mgblog_option($this->options, 'seoAuthorUrl', $this->options->siteUrl),
-    $this->options->siteUrl
-);
+$authorContext = mgblog_author_context($this, $this->options);
 ?>
 
 <div class="page-shell post-layout">
@@ -22,7 +18,7 @@ $pageAuthorUrl = mgblog_absolute_http_url(
                     <?php if ((int) $this->modified > (int) $this->created): ?>
                         <span><?php echo mgblog_icon('clock'); ?><time datetime="<?php echo mgblog_h(mgblog_iso_date($this->modified)); ?>" itemprop="dateModified"><?php _e('更新于'); ?> <?php echo mgblog_h((new \Typecho\Date((int) $this->modified))->format('Y-m-d')); ?></time></span>
                     <?php endif; ?>
-                    <span itemprop="author" itemscope itemtype="https://schema.org/Person"><?php echo mgblog_icon('brand'); ?><a href="<?php echo mgblog_h($pageAuthorUrl); ?>" itemprop="url"><span itemprop="name"><?php echo mgblog_h($pageAuthorName); ?></span></a></span>
+                    <span itemprop="author" itemscope itemtype="https://schema.org/Person"><?php echo mgblog_icon('user'); ?><a href="<?php echo mgblog_h($authorContext['url']); ?>" itemprop="url"><span itemprop="name"><?php echo mgblog_h($authorContext['name']); ?></span></a></span>
                 </div>
                 <?php if ($enableToc): ?>
                     <button class="mobile-toc-toggle" type="button" aria-expanded="false" aria-controls="mobile-toc-panel" data-mobile-toc-toggle>

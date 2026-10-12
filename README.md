@@ -79,6 +79,7 @@ flowchart LR
 | 联系邮箱 | `name@example.com` | 自动生成邮件按钮 |
 | 个人网站 | `https://example.com` | 个人主页地址 |
 | 其他链接 | `知乎\|https://zhihu.com/people/name` | 每行一条，格式“名称\|URL” |
+| 关联后台用户名 | `mingguan` | 该成员发布的文章，点击作者名直接跳到本成员主页；留空按页面标题匹配作者昵称 |
 
 > 以上字段仅在选择“MGHUB 成员主页”模板后显示，普通独立页面和文章不会出现这些字段。
 
