@@ -4,7 +4,7 @@
  *
  * @package MGBlog
  * @author 明关
- * @version 1.0.2
+ * @version 1.0.3
  * @link https://blog.mghub.top
  */
 
