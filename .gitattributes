@@ -1,0 +1,16 @@
+# 统一文本文件换行符为 LF，避免跨平台提交产生整文件差异
+* text=auto eol=lf
+
+# 第三方压缩库与二进制资源不做换行转换
+assets/vendor/**/*.min.js -text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary

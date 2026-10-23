@@ -100,7 +100,7 @@ $members = mgblog_members($this->options);
                                             <strong class="recent-comment-author"><?php echo mgblog_h($recentComments->author); ?></strong>
                                             <time datetime="<?php $recentComments->date('c'); ?>"><?php $recentComments->date('m-d'); ?></time>
                                         </span>
-                                        <span class="recent-comment-excerpt"><?php $recentComments->excerpt(48, '…'); ?></span>
+                                        <span class="recent-comment-excerpt"><?php echo mgblog_h(\Typecho\Common::subStr(strip_tags($recentComments->content), 0, 48, '…')); ?></span>
                                     </a>
                                 </li>
                             <?php endwhile; ?>
