@@ -1,5 +1,7 @@
 # MGBlog
 
+> **仓库已迁移**：本主题已并入 MGHUB Typecho 合集仓库 [MGBlogSuite](https://github.com/ReeskySUI/MGBlogSuite)，后续更新仅在合集仓库发布。本仓库自 v1.0.4 起归档只读，历史版本与发布包继续保留。
+
 MGBlog 是面向 Typecho 1.3.0 的 MGHUB 团队博客主题，现代化、简洁的响应式双栏设计：侧栏展示全体成员头像，点击进入成员个人主页；成员可自行编写介绍并配置 GitHub 等社交链接；支持自定义网站 LOGO 与 Favicon。MGBlog 基于 [SaBlog2026](https://www.samool.com)（原作者 SAMOOL，MIT License）改造，在此向原作者致谢。
 
 ## 主要能力
